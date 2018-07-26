@@ -43,4 +43,9 @@ def smoSimple(dataMatIn,classLabels,C,toler,maxIter):
             fXi=float(np.multiply(alphas,labelMat).T*
                       (dataMatrix*dataMatrix[i,:].T))+b
             Ei=fXi-float(labelMat[i])
+            if ((labelMat[i]*Ei<-toler) and (alphas[i]<C)) or (
+                    (labelMat[i]*Ei>toler) and (alphas[i]>0)):
+                j=selectJrand(i,m)
+
+
 

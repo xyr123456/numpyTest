@@ -14,7 +14,8 @@ def loadDataSet():
     return dataMat,labelMat
 
 def sigmoid(inX):
-    return 1.0/(1+np.exp(-inX))
+    return np.longfloat(1.0/(1+np.exp(-inX)))
+
 
 #矩阵乘法规律：T(m,n)*T(n,o)=T(m,o)
 def gradAscent(dataMatIn,classLabels):
@@ -42,7 +43,7 @@ def stocGradAscent0(dataMatrix,classLables):
     return weights
 
 #随机梯度上升算法改进
-def stocGradAscent1(dataMatrix,classLables,numIter=500,base_alpha=0.01):
+def stocGradAscent1(dataMatrix,classLables,numIter=150,base_alpha=0.01):
     m,n=np.shape(dataMatrix)
     weights=np.ones(n)
     for j in range(numIter):
@@ -87,6 +88,14 @@ def plotBestFit(wei):
     plt.xlabel('X1')
     plt.ylabel('X2')
     plt.show()
+
+def classifyVector(inX,weights):
+    prob=sigmoid(sum(inX*weights))
+    if prob>0.5:
+        return 1.0
+    else:
+        return 0.0
+
 
 if __name__ == '__main__':
     dataArr,labelMat=loadDataSet()

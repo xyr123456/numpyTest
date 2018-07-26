@@ -1,6 +1,7 @@
 #coding:utf-8
 import numpy as np
 import matplotlib.pyplot as plt
+import random
 
 def loadDataSet():
     dataMat=[]
@@ -13,7 +14,8 @@ def loadDataSet():
     return dataMat,labelMat
 
 def sigmoid(inX):
-    return 1.0/(1+np.exp(-inX))
+    return np.longfloat(1.0/(1+np.exp(-inX)))
+
 
 #矩阵乘法规律：T(m,n)*T(n,o)=T(m,o)
 def gradAscent(dataMatIn,classLabels):
@@ -29,8 +31,39 @@ def gradAscent(dataMatIn,classLabels):
         weights=weights+alpha*dataMatrix.transpose()*error
     return weights
 
+#随机梯度上升算法
+def stocGradAscent0(dataMatrix,classLables):
+    m,n=np.shape(dataMatrix)
+    alpha=0.01
+    weights=np.ones(n)
+    for i in range(m):
+        h=sigmoid(sum(dataMatrix[i]*weights))
+        error=classLables[i]-h
+        weights=weights+alpha*error*dataMatrix[i]
+    return weights
+
+#随机梯度上升算法改进
+def stocGradAscent1(dataMatrix,classLables,numIter=150,base_alpha=0.01):
+    m,n=np.shape(dataMatrix)
+    weights=np.ones(n)
+    for j in range(numIter):
+        dataIndex=list(range(m))
+        for i in range(m):
+            alpha=base_alpha+4/(1.0+j+i)
+            randIndex=int(random.uniform(0,len(dataIndex)))
+            index=dataIndex[randIndex]
+            h=sigmoid(sum(dataMatrix[index]*weights))
+            error=classLables[index]-h
+            weights=weights+alpha*error*dataMatrix[index]
+            del dataIndex[randIndex]
+    return weights
+
+
 def plotBestFit(wei):
-    weights=wei.getA()
+    if type(wei).__name__!='ndarray':
+        weights=wei.getA()
+    else:
+        weights=wei
     dataMat,labelMat=loadDataSet()
     dataArr=np.array(dataMat)
     n=np.shape(dataArr)[0]
@@ -56,8 +89,17 @@ def plotBestFit(wei):
     plt.ylabel('X2')
     plt.show()
 
+def classifyVector(inX,weights):
+    prob=sigmoid(sum(inX*weights))
+    if prob>0.5:
+        return 1.0
+    else:
+        return 0.0
+
 
 if __name__ == '__main__':
     dataArr,labelMat=loadDataSet()
-    weights=gradAscent(dataArr,labelMat)
+    # weights=gradAscent(dataArr,labelMat)
+    # plotBestFit(weights)
+    weights=stocGradAscent1(np.array(dataArr),labelMat)
     plotBestFit(weights)
